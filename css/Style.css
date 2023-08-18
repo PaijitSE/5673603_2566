@@ -49,7 +49,7 @@ h3 {
 
 .navbar {
     background-color: #076aff;
-    height: 50px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -101,6 +101,12 @@ h3 {
     border-radius : 10px;
   }
 
+h4 {
+  font-weight: bold;
+  text-align: center;
+  padding: 5px 0;
+}
+
 .product {
     width : 100%;
     height: auto;
@@ -136,3 +142,50 @@ h3 {
     margin-left: 10px;
 }
 
+.product .productBox .productTxt p {
+  margin: 0px 0px 0px 10px;
+}
+
+.product .productBox button {
+  margin: auto;
+  font-size: 12px;
+  border-radius: 8px;
+  width : 90%
+}
+
+.product .productBox button a {
+  text-decoration: none;
+  padding: 3px 8px;
+}
+
+.search {
+  padding: 10px;
+  background-color: rgb(132, 157, 248);
+  border-radius: 10px;
+}
+
+.search select {
+  word-wrap: normal;
+  float: right;
+  font-size: 14px;
+  color: red;
+  width: 250px;
+  border-radius: 10px;
+  padding: 2px;
+}
+
+.search input {
+  width: 250px;
+  font-size: 14px;
+  border-radius: 10px;
+  color : red;
+}
+
+.search button {
+  font-size: 12px;
+  color: white;
+  padding: 2px;
+  width: 60px;
+  background-color: #2407ff;
+  border-radius: 10px;
+}

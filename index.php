@@ -3,6 +3,18 @@
 <?php
 require_once('scripts/Myscript.php');
 $db_handle = new myDBControl();
+
+$x = '';
+// ตรวจสอบการส่ง คำค้น
+if (isset($_POST['searvh'])) {
+    $x = "WHERE (Product_name LIKE '%".$_POST['searvh']."%')";    
+}
+
+//ตรวจสอบการส่ง ประเภทสินค้า
+if (isset($_GET['Stype'])) {
+    $x = "WHERE (Product_type = '".$_GET['Stype']."')";    
+}
+
 ?>
 
 <head>
@@ -50,9 +62,13 @@ $db_handle = new myDBControl();
         </header>
         <!-- นราวิชญ์ -->
         <h4>Recommended Product</h4>
-        <?php $productdetail = $db_handle->Textquery("SELECT PRODUCT.*, CONCAT(LEFT(Product_name, 10),'...') AS New_name, Type_name FROM PRODUCT INNER JOIN PRODUCT_TYPE ON (PRODUCT.Product_type=PRODUCT_TYPE.Type_no) LIMIT 5;") ?>
+        <?php $productdetail = $db_handle->Textquery("SELECT PRODUCT.*, CONCAT(LEFT(Product_name, 10),'...') AS New_name, Type_name FROM PRODUCT INNER JOIN PRODUCT_TYPE ON (PRODUCT.Product_type=PRODUCT_TYPE.Type_no) WHERE Product_status = '1' LIMIT 5;") ?>
         <div class="product">
-            <?php foreach ($productdetail as $key => $value) {
+            <?php 
+            if (empty($productdetail)) { ?>
+                <p>ไม่มีสินค้าแนะนำ</p>
+            <?php } else {
+            foreach ($productdetail as $key => $value) {
             ?>
                 <div class="productBox">
                     <img class="productImg" src="<?php echo $productdetail[$key]["Product_picture"]; ?>">
@@ -63,43 +79,61 @@ $db_handle = new myDBControl();
                         <button><a href="#">Shop now</a></button>
                     </div>
                 </div>
-            <?php } ?>
+            <?php }
+        } ?>
         </div>
 
         <h4>All Product</h4>
         <!-- พิชิตชัย -->
         <div class="row search">
             <div class="col-5">
-                <form>
+                <form action= "index.php" Method="POST">
                     <input type="text" placeholder="Search" name="searvh" require>
                     <button type="submit" name="act" value="">ค้นหา</button>
                 </form>
             </div>
             <div class="col-2"></div>
             <div class="col-5">
-                <select aria-label="Default select example">
-                    <option selected>เลือกประเภทสินค้า</option>
-                    <option value="1">ขนม</option>
-                    <option value="2">อาหาร</option>
-                    <option value="3">เครืองดื่ม</option>
+                <?php $Typedetail = $db_handle->Textquery("SELECT * FROM PRODUCT_TYPE;") ?>                
+                <select aria-label="Default select example" name = "Stype" 
+                onchange="window.location='index.php?Stype='+this.value+''">
+                    <?php if (empty($Typedetail)) { ?>
+                        <option selected>ไม่มีประเภทสินค้า</option>    
+                    <?php } else { ?>
+                        <option selected>ทุกประเภทสินค้า</option>
+                        <?php foreach ($Typedetail as $key => $value) {?>
+                             <option value="<?php echo $Typedetail[$key]["Type_no"]; ?>">
+                             <?php echo $Typedetail[$key]["Type_name"]; ?></option>
+                             <?php } 
+                    } ?>
                 </select>
             </div>
         </div>
 
         <!-- พี่จาตุรนต์ -->
+        <?php $productAll = $db_handle->Textquery("SELECT PRODUCT.*, CONCAT(LEFT(Product_name, 20),'...') AS New_name, Type_name FROM PRODUCT INNER JOIN PRODUCT_TYPE ON (PRODUCT.Product_type=PRODUCT_TYPE.Type_no) ".$x.";"); 
+        //echo "SELECT PRODUCT.*, CONCAT(LEFT(Product_name, 20),'...') AS New_name, Type_name FROM PRODUCT INNER JOIN PRODUCT_TYPE ON (PRODUCT.Product_type=PRODUCT_TYPE.Type_no) '$x'"; ?>
+
+        <?php 
+            if (empty($productAll)) { ?>
+                <p>ไม่มีรายงานสินค้าในปัจจุบัน...</p>
+            <?php } else { ?>
         <div class="col-1">
-            <?php for ($i = 0; $i <= 30; $i++) { ?>
+            <?php  foreach ($productAll as $key => $value) { ?>
                 <div class="crad">
                     <div class="crad-img">
-                        <img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=580&q=80" alt="" class="img-1">
+                        <img src="<?php echo $productAll[$key]["Product_picture"];?>" alt="" class="img-1">
                     </div>
                     <div class="conent">
-                        <p>Product Name: item1</p>
-                        <p>Product Price: $20</p>
+                        <p><strong><?php echo $productAll[$key]["New_name"]; ?></strong></p>
+                        <p>Price :<?php echo $productAll[$key]["Product_price"]; ?></p>
+                        <p>Stock in : <?php echo $productAll[$key]["Product_count"]; ?></p>
+                        <button><a href="#">Shop now</a></button>
                     </div>
                 </div>
             <?php } ?>
-        </div>
+        </div> 
+        <?php } ?>
     </div>
 </body>
 
